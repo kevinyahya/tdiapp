@@ -10,29 +10,18 @@ var app = new Framework7({
 		{
 			path: '/customer/',
 			url: 'customer.html',
-			on: {
-				pageInit: function (e, page) {
-			        // do something when page initialized
-			        //var id = page.route.params.userName
-			        /*app.request.json('https://jsonplaceholder.typicode.com/todos/1', function (res){
-			        console.log(res);
-			          var obj = JSON.parse(res);
-			          for (var i = 0; i < obj.length; i++) {
-
-			          	$$('#customerList').append('<li><a href="#">' + obj[i]['title'] + '</a></li>');
-			          }
-			          // your magic code
-			        })*/
-
-			        
-			    }
-			},  
 		},
 		{
-
 			path: '/infoCustomer/:customerName',
 			url: 'infoCustomer.html',
-			
+		},
+		{
+			path: '/product/',
+			url: 'product.html',
+		},
+		{
+			path: '/infoProduct/:productName',
+			url: 'infoProduct.html',
 		}
 
 	]
@@ -48,10 +37,11 @@ $$(document).on('page:init',  function (e, page) {
 			mainView.router.navigate("/infoCustomer/" + $$('#inputName').val());
 		});
 	}
-	if(page.name == "infoCustomer"){
+	else if(page.name == "infoCustomer"){
+		app.preloader.show();
 		$name = page.router.currentRoute.params.customerName;
 		//app.dialog.alert($name);
-		app.request.post('http://localhost/tdiapp/searchcustomer.php', {name: $name}, function (data) {
+		app.request.post('http://103.89.5.148/searchCustomer.php', {name: $name}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
 		  	$html = '';
@@ -85,7 +75,38 @@ $$(document).on('page:init',  function (e, page) {
 		      	'</div>';
 		    }	
 		    $$('#cardCustomer').html($html);
-
+		    app.preloader.hide();
+		});
+	}
+	else if(page.name == "product"){
+		$$('#btnsearch').on('click', function() {
+			var x = new FormData($$(".form-ajax-searchProduct")[0]);
+			//console.log($$('#inputName').val());
+			mainView.router.navigate("/infoProduct/" + $$('#inputName').val());
+		});
+	}
+	else if(page.name == "infoProduct"){
+		app.preloader.show();
+		$name = page.router.currentRoute.params.productName;
+		//app.dialog.alert($name);
+		app.request.post('http://103.89.5.148/searchProduct.php', {name: $name}, function (data) {
+			//app.dialog.alert('tes');
+		  	var obj = JSON.parse(data);
+		  	$html = '';
+		  	for(var i=0; i < obj.length; i++) { 
+		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
+		      	$html += '<div class="card card-outline">'+
+		      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+'</b></div>'+
+		      		'<div class="card-content card-content-padding" id="cardContent">Kode Product : '+obj[i]['value']+'<br>'+
+		      																		'Product Group : '+obj[i]['productgroup']+'<br>'+
+		      																		'Warehouse Name : '+obj[i]['warehouse_name']+'<br>'+
+		      																		'Qty OnHand : '+obj[i]['totalqtyonhand']+'<br>'+
+		      																		'Qty Reserved : '+obj[i]['totalqtyreserved']+'<br>'+
+		      																		'Real Qty : '+obj[i]['realqty']+'</div>'+
+		      	'</div>';
+		    }	
+		    $$('#cardProduct').html($html);
+		    app.preloader.hide();
 		});
 	}
 });

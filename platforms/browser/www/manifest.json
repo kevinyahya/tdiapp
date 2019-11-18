@@ -1,12 +1,18 @@
 {
   "background_color": "#FFF",
   "display": "standalone",
-  "name": "helloworld",
-  "short_name": "helloworld",
+  "name": "tdiApp",
+  "short_name": "tdiApp",
   "version": "com.phonegap.helloworld",
-  "description": "Hello World sample application that responds to the deviceready event.",
-  "author": "PhoneGap Team",
-  "icons": [],
+  "description": "Created By : Onesimus Kevin",
+  "author": "Onesimus Kevin",
+  "icons": [
+    {
+      "src": "www/img/tdilogo.png",
+      "type": "image/png",
+      "sizes": "57x57"
+    }
+  ],
   "start_url": "index.html",
   "theme_color": "#2196f3"
 }
