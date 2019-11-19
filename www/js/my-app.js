@@ -43,6 +43,30 @@ var app = new Framework7({
 
 var mainView = app.views.create('.view-main');
 
+document.addEventListener('backbutton', function (e) {
+  	var cpage = mainView.activePage;
+    var cpagename = cpage.name;
+    console.log(cpagename);
+    if (($$('#leftpanel').hasClass('active'))) { // #leftpanel and #rightpanel are id of both panels.
+        app.closePanel();
+        return false;
+    } else if ($$('.modal-in').length > 0) {
+        app.closeModal();
+        return false;
+    } else if (cpagename == 'index') {
+        app.confirm('Are you sure you want to exit?', function() {
+            // var deviceType = device.platform;
+            // if(deviceType == “Android” || deviceType == “android”){
+            navigator.app.exitApp();
+            // }
+        },
+        function() {
+        });
+    } else {
+        mainView.router.back();
+    }
+}) 
+
 $$(document).on('page:init',  function (e, page) {
 	
 	if(page.name == "home"){
@@ -165,16 +189,6 @@ $$(document).on('page:init',  function (e, page) {
 $$('.customer-button').on('click', function () {
   //app.dialog.alert('Welcome to About');
 });
-
-document.addEventListener('backbutton', function (e) {
-  	var f7 = RootScope.f7;
-	var $ = RootScope.f7.$;
-	if ($('.panel-active').length || $('.panel-in').length) {
-	  f7.panel.close();
-	  return;
-	}
-	f7.views.main.router.back();
-}) 
 
 function formatRupiah(bilangan){
 
