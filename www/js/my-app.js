@@ -48,6 +48,7 @@ $$(document).on('page:init',  function (e, page) {
 	if(page.name == "home"){
 		app.preloader.show();
 		$$('#deviceID').html('Device ID : ' + device.uuid);
+		$$('#serialNumber').html('Serial Number : ' + device.serial);
 		app.request.post('http://103.89.2.99/getSOShipmentDraft.php', {}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
