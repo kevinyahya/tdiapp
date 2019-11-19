@@ -1,0 +1,61 @@
+<div class="page" data-name="home">
+   <!-- Top Navbar -->
+  <div class="navbar">
+    <div class="navbar-bg"></div>
+    <div class="navbar-inner">
+      <div class="left"><a class="panel-open" href="#" data-panel=".panel-left"><i class="f7-icons">list_bullet</i></a></div>
+      <div class="title">TDI Paint</div>
+      <div class="right"></div>
+    </div>
+  </div>
+
+    <div class="page-content">   
+      <div class="navbar">
+        <div class="block">
+          <p id="deviceID" >Device ID : </p>
+            <div class="row">
+              <div class="col-50">
+                <a href="/salesOrder/">
+                  <div class="card">
+                    <div class="card-header" style="color:black;">Sales Order</div>
+                    <div class="card-content card-content-padding text-align-center">
+                      <div
+                        class="gauge gauge-init gaugeso"
+                        data-type="circle"
+                        data-value="0"
+                        data-value-text="1"
+                        data-label-text="/ 0"
+                        data-value-text-color="#f44336"
+                        data-border-color="#f44336"
+                        data-border-width="30"
+                      ></div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <div class="col-50">
+                <a href="/shipment/">
+                  <div class="card">
+                    <div class="card-header" style="color:black;">Shipment</div>
+                    <div class="card-content card-content-padding text-align-center">
+                      <div
+                        class="gauge gauge-init gaugeshipment"
+                        data-type="circle"
+                        data-value="0"
+                        data-value-text="10"
+                        data-label-text="/ 0"
+                        data-value-text-color="#ff9800"
+                        data-border-color="#ff9800"
+                        data-border-width="30"
+                      ></div>
+                    </div>
+                  </div>
+                </a>
+              </div>
+              <a href="/customer/" class="col button button-big button-fill customer-button">Customer</a>
+              <a href="/product/" class="col button button-big button-fill customer-button">Product</a>
+            </div>
+        </div>
+      </div>
+    </div>
+</div>
