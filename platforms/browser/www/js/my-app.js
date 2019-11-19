@@ -6,6 +6,7 @@ var app = new Framework7({
 	id: 'com.tdipaint.TDIApp',
 	panel: { swipe: 'left' },
 	theme: 'md',
+	pushState: true,
 	routes: [
 		{
 			path: '/home/',
@@ -47,7 +48,7 @@ $$(document).on('page:init',  function (e, page) {
 	if(page.name == "home"){
 		app.preloader.show();
 		$$('#deviceID').html('Device ID : ' + device.uuid);
-		app.request.post('http://localhost/tdiApp/getSOShipmentDraft.php', {}, function (data) {
+		app.request.post('http://103.89.2.99/getSOShipmentDraft.php', {}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
 		  
@@ -86,7 +87,7 @@ $$(document).on('page:init',  function (e, page) {
 		$name = page.router.currentRoute.params.customerName;
 		//app.dialog.alert($name);
 		//app.request.post('http://103.89.5.148/searchCustomer.php', {name: $name}, function (data) {
-		app.request.post('http://localhost/tdiApp/searchCustomer.php', {name: $name}, function (data) {
+		app.request.post('http://103.89.2.99/searchCustomer.php', {name: $name}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
 		  	$html = '';
@@ -138,7 +139,7 @@ $$(document).on('page:init',  function (e, page) {
 		$name = page.router.currentRoute.params.productName;
 		//app.dialog.alert($name);
 		//app.request.post('http://103.89.5.148/searchProduct.php', {name: $name}, function (data) {
-		app.request.post('http://localhost/tdiApp/searchProduct.php', {name: $name}, function (data) {
+		app.request.post('http://103.89.2.99/searchProduct.php', {name: $name}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
 		  	$html = '';
@@ -163,6 +164,20 @@ $$(document).on('page:init',  function (e, page) {
 $$('.customer-button').on('click', function () {
   //app.dialog.alert('Welcome to About');
 });
+
+document.addEventListener('backbutton', function (e) {
+  var f7 = RootScope.f7;
+	var $ = RootScope.f7.$;
+	if ($('.modal-in').length && $('.modal-in')[0].f7Modal) {
+	  $('.modal-in')[0].f7Modal.close();
+	  return;
+	}
+	if ($('.panel-active').length) {
+	  f7.panel.close();
+	  return;
+	}
+	f7.views.main.router.back();
+}) 
 
 function formatRupiah(bilangan){
 
