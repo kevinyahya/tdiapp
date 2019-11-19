@@ -168,11 +168,7 @@ $$('.customer-button').on('click', function () {
 document.addEventListener('backbutton', function (e) {
   	var f7 = RootScope.f7;
 	var $ = RootScope.f7.$;
-	if ($('.modal-in').length && $('.modal-in')[0].f7Modal) {
-	  $('.modal-in')[0].f7Modal.close();
-	  return;
-	}
-	if ($('.panel-active').length) {
+	if ($('.panel-active').length || $('.panel-in').length) {
 	  f7.panel.close();
 	  return;
 	}
