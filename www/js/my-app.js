@@ -240,7 +240,7 @@ $$(document).on('page:init',  function (e, page) {
 		$endDate = page.router.currentRoute.params.endDate;
 
 		if($salesCustomer == "Sales"){
-			app.request.post('http://localhost/tdiApp/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://103.89.2.99/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
@@ -261,7 +261,7 @@ $$(document).on('page:init',  function (e, page) {
 			    $$('#cardOmset').html($html);
 			});
 		} else if($salesCustomer == "Customer"){
-			app.request.post('http://localhost/tdiApp/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://103.89.2.99/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
