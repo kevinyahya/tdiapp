@@ -36,6 +36,14 @@ var app = new Framework7({
 			path: '/shipment/',
 			url: 'shipment.html',
 		},
+		{
+			path: '/omset/',
+			url: 'omset.html',
+		},
+		{
+			path: '/infoOmset/:salesCustomer/:salesName/:startDate/:endDate',
+			url: 'infoOmset.html',
+		},
 
 
 	]
@@ -44,14 +52,13 @@ var app = new Framework7({
 var mainView = app.views.create('.view-main');
 
 document.addEventListener('backbutton', function (e) {
-  	var cpage = mainView.activePage;
+	//app.dialog.alert('tes');
+	RootScope.app.views.main.router.back();
+  	/*var cpage = mainView.activePage;
     var cpagename = cpage.name;
     console.log(cpagename);
     if (($$('#leftpanel').hasClass('active'))) { // #leftpanel and #rightpanel are id of both panels.
         app.closePanel();
-        return false;
-    } else if ($$('.modal-in').length > 0) {
-        app.closeModal();
         return false;
     } else if (cpagename == 'index') {
         app.confirm('Are you sure you want to exit?', function() {
@@ -64,7 +71,7 @@ document.addEventListener('backbutton', function (e) {
         });
     } else {
         mainView.router.back();
-    }
+    }*/
 }) 
 
 $$(document).on('page:init',  function (e, page) {
@@ -183,6 +190,99 @@ $$(document).on('page:init',  function (e, page) {
 		    $$('#cardProduct').html($html);
 		    app.preloader.hide();
 		});
+	}
+	else if(page.name == "omset"){
+		var calendarModalStart = app.calendar.create({
+		  inputEl: '#start-calendar-modal',
+		  openIn: 'customModal',
+		  dateFormat: 'yyyy-mm-dd',
+		  header: true,
+		  footer: true,
+		});
+
+		var calendarModalEnd = app.calendar.create({
+		  inputEl: '#end-calendar-modal',
+		  openIn: 'customModal',
+		  dateFormat: 'yyyy-mm-dd',
+		  header: true,
+		  footer: true,
+		});
+		var picker = app.picker.create({
+		  inputEl: '#omset-picker-device',
+		  cols: [
+		    {
+		      textAlign: 'center',
+		      values: ['Sales', 'Customer']
+		    }
+		  ]
+		});
+
+		$$('#btnsearch').on('click', function() {
+			var x = new FormData($$(".form-ajax-searchOmset")[0]);
+			//console.log($$('#inputName').val());
+			var startDate = new Date(calendarModalStart.getValue()).toISOString().slice(0, 10);
+			var endDate = new Date(calendarModalEnd.getValue()).toISOString().slice(0, 10);
+			var salesCustomer = picker.getValue();
+			
+			if(salesCustomer == undefined){
+				app.dialog.alert("Sales or Customer required");
+			}else{
+				mainView.router.navigate("/infoOmset/"+ salesCustomer+ "/"  + $$('#inputName').val() + "/" + startDate+ "/" + endDate);
+			}
+			//
+		});
+	}
+	else if(page.name == "infoOmset"){
+		app.preloader.show();
+		$salesCustomer = page.router.currentRoute.params.salesCustomer;
+		$name = page.router.currentRoute.params.salesName;
+		$startDate = page.router.currentRoute.params.startDate;
+		$endDate = page.router.currentRoute.params.endDate;
+
+		if($salesCustomer == "Sales"){
+			app.request.post('http://localhost/tdiApp/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			//app.dialog.alert(data);
+			  	var obj = JSON.parse(data);
+			  	$html = '';
+			  	for(var i=0; i < obj.length; i++) { 
+			      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
+
+			      	var grandtotal = obj[i]['grandtotal'];
+						grandtotal = parseFloat(grandtotal).toFixed(2);
+						grandtotal = formatRupiah(grandtotal);
+
+			      	$html += '<div class="card card-outline">'+
+			      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+' (Sales)</b></div>'+
+			      		'<div class="card-content card-content-padding" id="cardContent">Name : '+obj[i]['name']+'<br>'+
+			      																		'Omset : Rp. '+grandtotal+'<br>'+
+			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'</div>'+
+			      	'</div>';
+			    }	
+			    $$('#cardOmset').html($html);
+			});
+		} else if($salesCustomer == "Customer"){
+			app.request.post('http://localhost/tdiApp/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			//app.dialog.alert(data);
+			  	var obj = JSON.parse(data);
+			  	$html = '';
+			  	for(var i=0; i < obj.length; i++) { 
+			      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
+
+			      	var grandtotal = obj[i]['grandtotal'];
+						grandtotal = parseFloat(grandtotal).toFixed(2);
+						grandtotal = formatRupiah(grandtotal);
+
+			      	$html += '<div class="card card-outline">'+
+			      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+' (Customer)</b></div>'+
+			      		'<div class="card-content card-content-padding" id="cardContent">Name : '+obj[i]['name']+'<br>'+
+			      																		'Omset : Rp. '+grandtotal+'<br>'+
+			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'</div>'+
+			      	'</div>';
+			    }	
+			    $$('#cardOmset').html($html);
+			});
+		}
+		app.preloader.hide();
 	}
 });
 
