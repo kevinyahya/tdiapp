@@ -44,6 +44,10 @@ var app = new Framework7({
 			path: '/infoOmset/:salesCustomer/:salesName/:startDate/:endDate',
 			url: 'infoOmset.html',
 		},
+		{
+			path: '/aging/',
+			url: 'infoAging.html',
+		},
 
 
 	]
@@ -240,7 +244,7 @@ $$(document).on('page:init',  function (e, page) {
 		$endDate = page.router.currentRoute.params.endDate;
 
 		if($salesCustomer == "Sales"){
-			app.request.post('http://localhost/tdiapp/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://103.89.2.99/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
@@ -267,7 +271,7 @@ $$(document).on('page:init',  function (e, page) {
 			    $$('#cardOmset').html($html);
 			});
 		} else if($salesCustomer == "Customer"){
-			app.request.post('http://localhost/tdiapp/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://103.89.2.99/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
@@ -281,7 +285,7 @@ $$(document).on('page:init',  function (e, page) {
 					var grandtotalall = obj[i]['grandtotalall'];
 						grandtotalall = parseFloat(grandtotalall).toFixed(2);
 						grandtotalall = formatRupiah(grandtotalall);
-						
+
 			      	$html += '<div class="card card-outline">'+
 			      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+' (Customer)</b></div>'+
 			      		'<div class="card-content card-content-padding" id="cardContent">Name : '+obj[i]['name']+'<br>'+
@@ -294,6 +298,85 @@ $$(document).on('page:init',  function (e, page) {
 			    $$('#cardOmset').html($html);
 			});
 		}
+		app.preloader.hide();
+	}
+	else if(page.name == "infoAging"){
+		app.preloader.show();
+		app.request.post('http://103.89.2.99/getOpenAmt.php', {}, function (data) {
+			var obj = JSON.parse(data);
+		  	$html = '';
+
+		  	for(var i=0; i < obj.length; i++) { 
+		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
+
+		      	var grandtotal = obj[i]['value'];
+					grandtotal = parseFloat(grandtotal).toFixed(2);
+					grandtotal = formatRupiah(grandtotal);
+
+		      	$html += '<div class="card card-outline">'+
+		      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+'</b></div>'+
+		      		'<div class="card-content card-content-padding" id="cardContent">Outstanding AR : Rp. '+grandtotal+'<br></div>'+
+		      	'</div>';
+
+		    }	
+		    var ctx = document.getElementById('chartAging').getContext('2d');
+		    var myChart = new Chart(ctx, {
+			    type: 'pie',
+			    data: {
+			        labels: ['0-30 Days', '31-60 Days', '61-90 Days', 'Over 90 Days'],
+			        datasets: [{
+			            label: '# of Votes',
+			            data: [	parseFloat(obj[0]['value'] / obj[4]['value'] * 100).toFixed(2), 
+			            		parseFloat(obj[1]['value'] / obj[4]['value'] * 100).toFixed(2), 
+			            		parseFloat(obj[2]['value'] / obj[4]['value'] * 100).toFixed(2), 
+			            		parseFloat(obj[3]['value'] / obj[4]['value'] * 100).toFixed(2),],
+			            backgroundColor: [
+			                'rgba(255, 99, 132, 0.2)',
+			                'rgba(54, 162, 235, 0.2)',
+			                'rgba(255, 206, 86, 0.2)',
+			                'rgba(75, 192, 192, 0.2)',
+			            ],
+			            borderColor: [
+			                'rgba(255, 99, 132, 1)',
+			                'rgba(54, 162, 235, 1)',
+			                'rgba(255, 206, 86, 1)',
+			                'rgba(75, 192, 192, 1)',
+			            ],
+			            borderWidth: 1
+			        }]
+			    },
+			    options: {
+			        responsive: true
+			    }
+			});
+
+		    /*var config = new Chart(ctx, {
+				type: 'pie',
+				data: {
+					datasets: [{
+						data: [
+							obj[0]['value'] / obj[4]['value'],
+							obj[1]['value'] / obj[4]['value'],
+							obj[2]['value'] / obj[4]['value'],
+							obj[3]['value'] / obj[4]['value'],
+						],
+						backgroundColor: [
+							'rgba(255, 0, 0, 1)',
+							'rgba(0, 255, 0, 1)',
+							'rgba(0, 0, 255, 1)',
+							'rgba(255, 255, 0, 1)',
+						],
+						label: 'Dataset 1'
+					}],
+				},
+				options: {
+					responsive: true
+				}
+			});*/
+		    $$('#cardAging').html($html);
+		});
+
+		
 		app.preloader.hide();
 	}
 });
