@@ -240,7 +240,7 @@ $$(document).on('page:init',  function (e, page) {
 		$endDate = page.router.currentRoute.params.endDate;
 
 		if($salesCustomer == "Sales"){
-			app.request.post('http://103.89.2.99/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://localhost/tdiapp/getOmsetSales.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
@@ -250,18 +250,24 @@ $$(document).on('page:init',  function (e, page) {
 			      	var grandtotal = obj[i]['grandtotal'];
 						grandtotal = parseFloat(grandtotal).toFixed(2);
 						grandtotal = formatRupiah(grandtotal);
+
+					var grandtotalall = obj[i]['grandtotalall'];
+						grandtotalall = parseFloat(grandtotalall).toFixed(2);
+						grandtotalall = formatRupiah(grandtotalall);
 
 			      	$html += '<div class="card card-outline">'+
 			      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+' (Sales)</b></div>'+
 			      		'<div class="card-content card-content-padding" id="cardContent">Name : '+obj[i]['name']+'<br>'+
 			      																		'Omset : Rp. '+grandtotal+'<br>'+
-			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'</div>'+
+			      																		'Omset (All) : Rp. '+grandtotalall+'<br>' +
+			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'<br>' +
+			      																		'Omset Tonase (All) :  '+(obj[i]['totalweightall'] != undefined ?  obj[i]['totalweightall'] : 0)+'</div>'+
 			      	'</div>';
 			    }	
 			    $$('#cardOmset').html($html);
 			});
 		} else if($salesCustomer == "Customer"){
-			app.request.post('http://103.89.2.99/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
+			app.request.post('http://localhost/tdiapp/getOmsetCustomer.php', {name: $name, startDate: $startDate, endDate: $endDate}, function (data) {
 			//app.dialog.alert(data);
 			  	var obj = JSON.parse(data);
 			  	$html = '';
@@ -272,11 +278,17 @@ $$(document).on('page:init',  function (e, page) {
 						grandtotal = parseFloat(grandtotal).toFixed(2);
 						grandtotal = formatRupiah(grandtotal);
 
+					var grandtotalall = obj[i]['grandtotalall'];
+						grandtotalall = parseFloat(grandtotalall).toFixed(2);
+						grandtotalall = formatRupiah(grandtotalall);
+						
 			      	$html += '<div class="card card-outline">'+
 			      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+' (Customer)</b></div>'+
 			      		'<div class="card-content card-content-padding" id="cardContent">Name : '+obj[i]['name']+'<br>'+
 			      																		'Omset : Rp. '+grandtotal+'<br>'+
-			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'</div>'+
+			      																		'Omset (All) : Rp. '+grandtotalall+'<br>' +
+			      																		'Omset Tonase :  '+(obj[i]['totalweight'] != undefined ?  obj[i]['totalweight'] : 0)+'<br>' +
+			      																		'Omset Tonase (All) :  '+(obj[i]['totalweightall'] != undefined ?  obj[i]['totalweightall'] : 0)+'</div>'+
 			      	'</div>';
 			    }	
 			    $$('#cardOmset').html($html);
