@@ -374,12 +374,17 @@ $$(document).on('page:init',  function (e, page) {
 					remaining = parseFloat(remaining).toFixed(2);
 					remaining = formatRupiah(remaining);
 
+				var grandtotal = obj[i]['grandtotal'];
+					grandtotal = parseFloat(grandtotal).toFixed(2);
+					grandtotal = formatRupiah(grandtotal);
+
 		      	$html += '<li class = "card" style="list-style-type: none;">'+
 		      	'<div class="card-header item-title" id="cardHeader"><b>'+obj[i]['documentno']+'_'+obj[i]['kodecust']+'</b></div>'+
 		      	'<div class="card-content" id="cardContent">'+
 		      		'<div class="card-content-inner card-content-padding item-title">Customer   : '+obj[i]['name']+'<br>'+
 			      									'Invoice No : '+obj[i]['documentno']+'<br>'+
-													'Tanggal    : '+obj[i]['dateinvoiced']+'<br>' +
+													'Tanggal    : '+obj[i]['dateinvoiced']+' ('+obj[i]['selisih']+' Hari)<br>' +
+													'Amount    : '+grandtotal+'<br>' +
 													'Payment    : Rp. '+payment+'<br>' +
 													'Remaining  : Rp. : '+remaining+'</div>';
 		      	'</div></li>';
