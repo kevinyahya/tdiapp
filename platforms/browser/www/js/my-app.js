@@ -363,9 +363,12 @@ $$(document).on('page:init',  function (e, page) {
 			var obj = JSON.parse(data);
 		  	$html = '';
 		  	$html += '<ul style="margin:0px; padding:0px;">';
+		  	$count_customer = 0;
+		  	$count_invoice = 0;
 		  	for(var i=0; i < obj.length; i++) { 
 		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
-
+		      	$count_customer = obj[0]['countcust'];
+		      	$count_invoice = obj[0]['countinv'];
 		      	var payment = obj[i]['paidamt'];
 					payment = parseFloat(payment).toFixed(2);
 					payment = formatRupiah(payment);
@@ -391,6 +394,7 @@ $$(document).on('page:init',  function (e, page) {
 
 		    }
 		    $html += '</ul>';
+		    $$('#titleInfoDetailAging').html('Customer : ' + $count_customer + ' &emsp; Invoice : ' + $count_invoice);	
 		    $$('#cardAgingDetail').html($html);	
 		});
 
