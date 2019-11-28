@@ -48,6 +48,10 @@ var app = new Framework7({
 			path: '/aging/',
 			url: 'infoAging.html',
 		},
+		{
+			path: '/detailAging/:periode',
+			url: 'infoDetailAging.html',
+		},
 
 
 	]
@@ -308,15 +312,14 @@ $$(document).on('page:init',  function (e, page) {
 
 		  	for(var i=0; i < obj.length; i++) { 
 		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
-
 		      	var grandtotal = obj[i]['value'];
 					grandtotal = parseFloat(grandtotal).toFixed(2);
 					grandtotal = formatRupiah(grandtotal);
 
-		      	$html += '<div class="card card-outline">'+
+		      	$html += '<a href="/detailAging/'+i+'" style="color:black;"> <div class="card card-outline">'+
 		      	'<div class="card-header" id="cardHeader"><b>'+obj[i]['name']+'</b></div>'+
 		      		'<div class="card-content card-content-padding" id="cardContent">Outstanding AR : Rp. '+grandtotal+'<br></div>'+
-		      	'</div>';
+		      	'</div></a>';
 
 		    }	
 		    var ctx = document.getElementById('chartAging').getContext('2d');
@@ -349,34 +352,53 @@ $$(document).on('page:init',  function (e, page) {
 			        responsive: true
 			    }
 			});
-
-		    /*var config = new Chart(ctx, {
-				type: 'pie',
-				data: {
-					datasets: [{
-						data: [
-							obj[0]['value'] / obj[4]['value'],
-							obj[1]['value'] / obj[4]['value'],
-							obj[2]['value'] / obj[4]['value'],
-							obj[3]['value'] / obj[4]['value'],
-						],
-						backgroundColor: [
-							'rgba(255, 0, 0, 1)',
-							'rgba(0, 255, 0, 1)',
-							'rgba(0, 0, 255, 1)',
-							'rgba(255, 255, 0, 1)',
-						],
-						label: 'Dataset 1'
-					}],
-				},
-				options: {
-					responsive: true
-				}
-			});*/
 		    $$('#cardAging').html($html);
 		});
+		app.preloader.hide();
+	}
+	else if(page.name == "infoDetailAging"){
+		app.preloader.show();
+		$where_periode = page.router.currentRoute.params.periode;
+		app.request.post('http://103.89.2.99/getOpenAmtDetail.php', {periode:$where_periode}, function (data) {
+			var obj = JSON.parse(data);
+		  	$html = '';
+		  	$html += '<ul style="margin:0px; padding:0px;">';
+		  	for(var i=0; i < obj.length; i++) { 
+		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
 
-		
+		      	var payment = obj[i]['paidamt'];
+					payment = parseFloat(payment).toFixed(2);
+					payment = formatRupiah(payment);
+
+				var remaining = obj[i]['openamt'];
+					remaining = parseFloat(remaining).toFixed(2);
+					remaining = formatRupiah(remaining);
+
+		      	$html += '<li class = "card" style="list-style-type: none;">'+
+		      	'<div class="card-header item-title" id="cardHeader"><b>'+obj[i]['documentno']+'_'+obj[i]['kodecust']+'</b></div>'+
+		      	'<div class="card-content" id="cardContent">'+
+		      		'<div class="card-content-inner card-content-padding item-title">Customer   : '+obj[i]['name']+'<br>'+
+			      									'Invoice No : '+obj[i]['documentno']+'<br>'+
+													'Tanggal    : '+obj[i]['dateinvoiced']+'<br>' +
+													'Payment    : Rp. '+payment+'<br>' +
+													'Remaining  : Rp. : '+remaining+'</div>';
+		      	'</div></li>';
+
+		    }
+		    $html += '</ul>';
+		    $$('#cardAgingDetail').html($html);	
+		});
+
+		var searchbar = app.searchbar.create({
+		  el: '.searchbar',
+		  searchContainer: '.list',
+		  searchIn: '.item-title',
+		  on: {
+		    search(sb, query, previousQuery) {
+		      console.log(query, previousQuery);
+		    }
+		  }
+		});
 		app.preloader.hide();
 	}
 });
