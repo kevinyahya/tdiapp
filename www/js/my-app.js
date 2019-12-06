@@ -152,6 +152,10 @@ $$(document).on('page:init',  function (e, page) {
 					so_total = parseFloat(so_total).toFixed(2);
 					so_total = formatRupiah(so_total);
 
+				var point = obj[i]['point'];
+					point = parseFloat(point).toFixed(0);
+					point = formatRupiah(point);
+
 					//so_total = formatRupiah(so_total,'Rp. ').toFixed(2);
 
 		      //$$('#driverlist').append('<li><a href="#">' + obj[i]['name'] + '</a></li>');
@@ -160,7 +164,8 @@ $$(document).on('page:init',  function (e, page) {
 		      		'<div class="card-content card-content-padding" id="cardContent">Kode Customer : '+obj[i]['value']+'<br>'+
 		      																		'SO Credit Limit : Rp. '+socreditlimit+'<br>'+
 		      																		'Total Open Balance : Rp. '+totalopenbalance+'<br>'+
-		      																		'Total SO : Rp. '+so_total+'</div>'+
+		      																		'Total SO : Rp. '+so_total+'<br>'+
+		      																		'Total Point : '+point+'</div>'+
 		      	'</div>';
 		    }	
 		    $$('#cardCustomer').html($html);
