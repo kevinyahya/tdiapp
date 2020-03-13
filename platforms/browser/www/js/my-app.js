@@ -52,6 +52,18 @@ var app = new Framework7({
 			path: '/detailAging/:periode',
 			url: 'infoDetailAging.html',
 		},
+		{
+			path: '/branch_request/',
+			url: 'listbranchrequest.html',
+		},
+		{
+			path: '/detail_branch_req/:branchID/:documentno',
+			url: 'infoDetailBranchRequest.html',
+		},
+		{
+			path: '/approveBReq/:branchID',
+			url: 'listbranchrequest.html',
+		},
 
 
 	]
@@ -88,7 +100,7 @@ $$(document).on('page:init',  function (e, page) {
 		app.preloader.show();
 		$$('#deviceID').html('Device ID : ' + device.uuid);
 		$$('#serialNumber').html('Serial Number : ' + device.serial);
-		app.request.post('http://103.89.2.99/getSOShipmentDraft.php', {}, function (data) {
+		app.request.post('http://103.89.2.99/getHomeData.php', {}, function (data) {
 			//app.dialog.alert('tes');
 		  	var obj = JSON.parse(data);
 		  
@@ -109,6 +121,16 @@ $$(document).on('page:init',  function (e, page) {
 			  valueText: obj[0]['countshipment'],
 			  valueFontSize: 72,
 			  labelText: '/ ' + obj[0]['totalshipment'],
+			  labelFontSize : 25,
+			});
+
+			var gaugeSH = app.gauge.get('.gaugebranchrequest');
+
+			gaugeSH.update({
+			  value: obj[0]['totalbranchreq']/ obj[0]['countbranchreq'] ,
+			  valueText: obj[0]['countbranchreq'],
+			  valueFontSize: 72,
+			  labelText: '/ ' + obj[0]['totalbranchreq'],
 			  labelFontSize : 25,
 			});
 
@@ -414,6 +436,76 @@ $$(document).on('page:init',  function (e, page) {
 		  }
 		});
 		app.preloader.hide();
+	}
+	else if(page.name == "listbranchrequest"){
+		app.preloader.show();
+		app.request.post('http://103.89.2.99/getUnApprovedBR.php', {}, function (data) {
+			var obj = JSON.parse(data);
+		  	$html = '';
+		  	$html += '<ul style="margin:0px; padding:0px;">';
+		  	$count_customer = 0;
+		  	$count_invoice = 0;
+		  	for(var i=0; i < obj.length; i++) { 
+
+		      	$html += '<a href="/detail_branch_req/'+obj[i]['tdi_branchrequest_id']+'/'+obj[i]['documentno']+'" style="color:black;"> <li class = "card" style="list-style-type: none;">'+
+		      	'<div class="card-header item-title" id="cardHeader"><b>'+obj[i]['documentno']+'</b></div>'+
+		      	'<div class="card-content" id="cardContent">'+
+		      		'<div class="card-content-inner card-content-padding item-title">'+obj[i]['description']+'</div>';
+		      	'</div></li></a>';
+
+		    }
+		    $html += '</ul>';
+		    $$('#cardBReq').html($html);	
+		});
+
+		var searchbar = app.searchbar.create({
+		  el: '.searchbar',
+		  searchContainer: '.list',
+		  searchIn: '.item-title',
+		  on: {
+		    search(sb, query, previousQuery) {
+		      console.log(query, previousQuery);
+		    }
+		  }
+		});
+		app.preloader.hide();
+	}
+	else if(page.name == "infoDetailBranchRequest"){
+		app.preloader.show();
+		$where_branchID = page.router.currentRoute.params.branchID;
+		$where_documentno = page.router.currentRoute.params.documentno;
+		app.request.post('http://103.89.2.99/getUnApprovedBRDetail.php', {branchid:$where_branchID}, function (data) {
+			var obj = JSON.parse(data);
+		  	$html = '';
+		  	$html += '';
+		  	for(var i=0; i < obj.length; i++) { 
+		  		$html += '<tr>';
+			    $html += '<td class="label-cell">'+obj[i]['productname']+'</td>';
+			    $html += '<td class="numeric-cell">'+parseInt(obj[i]['qty'])+'</td>';
+			    $html += '<td class="label-cell">'+obj[i]['uomname']+'</td>';
+			    $html += '<td class="numeric-cell">'+parseInt(obj[i]['requestqty'])+'</td>';
+			    $html += '<td class="numeric-cell">'+parseInt(obj[i]['avgsalesqty'])+'</td>';
+			    $html += '</tr>';
+		    }
+		    BRDetailTitle
+		    //$$('#linkBtnBR').attr('href', '/approveBReq/'+$where_branchID);
+		    $$('#BRDetailTitle').html($where_documentno);	
+		    $$('#tbodyBReqDetail').html($html);
+		});
+		app.preloader.hide();
+		$$('.confirm-title-ok').on('click', function () {
+		    app.dialog.confirm('Approve this request?', $where_documentno, function () {
+		        app.request.post('http://103.89.2.99/UpdateApprovedBR.php', {branchid:$where_branchID}, function (data) {
+					app.dialog.alert('Approved');
+					$$('#divFloatingButton').hide();
+					page.view.router.back({
+	                    url: '/branch_request/',
+	                    force: true,
+	                    ignoreCache: true
+	                })
+				});
+		    });
+		});	
 	}
 });
 
